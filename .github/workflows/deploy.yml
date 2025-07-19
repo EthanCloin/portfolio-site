@@ -28,16 +28,14 @@ jobs:
 
     # 3️⃣ Sync everything to the server
     - name: Upload with rsync over SSH
-      uses: easingthemes/ssh-deploy@v4             # battle‑tested rsync wrapper :contentReference[oaicite:0]{index=0}
-      env:
+      uses: easingthemes/ssh-deploy@v4
+      with:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
-        REMOTE_HOST:     ${{ secrets.SSH_HOST }}
-        REMOTE_USER:     ${{ secrets.SSH_USER }}
-        # REMOTE_PORT:   22            # add if custom
-        SOURCE:          "."          # or "dist/" if you build
-        TARGET:          "/var/www/html/ethancloin.xyz"
-        ARGS:            "-avzr --delete"  # delete files removed in git
-        KNOWN_HOSTS:     ${{ secrets.SSH_KNOWN_HOSTS }}
+        REMOTE_HOST: ${{ secrets.SSH_HOST }}
+        REMOTE_USER: ${{ secrets.SSH_USER }}
+        SOURCE: "."
+        TARGET: /var/www/html/ethancloin.xyz
+        ARGS: "-avzr --delete"
 
     # 4️⃣ (Optional) run post‑deploy commands (cache‑clear, etc.)
     - name: Touch reload file
