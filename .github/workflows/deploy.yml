@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-22.04
+    environment: autodeploy_nginx
 
     # Make the whole job fail fast if another push arrives
     concurrency:
