@@ -39,7 +39,7 @@ jobs:
 
     # 4️⃣ (Optional) run post‑deploy commands (cache‑clear, etc.)
     - name: Touch reload file
-      uses: appleboy/ssh-action@v1                       :contentReference[oaicite:1]{index=1}
+      uses: appleboy/ssh-action@v1
       with:
         host:     ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USER }}
