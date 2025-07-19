@@ -1,0 +1,48 @@
+name: Deploy static site to VPS
+
+on:
+  push:
+    branches: [main]   # fires when PRs are merged into `main`
+  workflow_dispatch:     # lets you trigger manually from the UI
+
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+
+    # Make the whole job fail fast if another push arrives
+    concurrency:
+      group: "deploy-${{ github.ref }}"
+      cancel-in-progress: true
+
+    steps:
+    # 1️⃣ Check out the exact commit that just landed
+    - uses: actions/checkout@v4
+
+    # 2️⃣ (Optional) Build your static assets here
+    # - uses: actions/setup-node@v4
+    #   with: { node-version: "20" }
+    # - run: npm ci && npm run build
+    #   # Suppose the build artefacts land in `dist/`
+
+    # 3️⃣ Sync everything to the server
+    - name: Upload with rsync over SSH
+      uses: easingthemes/ssh-deploy@v4             # battle‑tested rsync wrapper :contentReference[oaicite:0]{index=0}
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
+        REMOTE_HOST:     ${{ secrets.SSH_HOST }}
+        REMOTE_USER:     ${{ secrets.SSH_USER }}
+        # REMOTE_PORT:   22            # add if custom
+        SOURCE:          "."          # or "dist/" if you build
+        TARGET:          "/var/www/html/ethancloin.xyz"
+        ARGS:            "-avzr --delete"  # delete files removed in git
+        KNOWN_HOSTS:     ${{ secrets.SSH_KNOWN_HOSTS }}
+
+    # 4️⃣ (Optional) run post‑deploy commands (cache‑clear, etc.)
+    - name: Touch reload file
+      uses: appleboy/ssh-action@v1                       :contentReference[oaicite:1]{index=1}
+      with:
+        host:     ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key:      ${{ secrets.SSH_KEY }}
+        script:   |
+          sudo systemctl reload nginx
