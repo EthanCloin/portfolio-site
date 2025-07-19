@@ -18,7 +18,6 @@ jobs:
     steps:
     # 1️⃣ Check out the exact commit that just landed
     - uses: actions/checkout@v4
-    - run: echo ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
 
     # 2️⃣ (Optional) Build your static assets here
     # - uses: actions/setup-node@v4
