@@ -11,20 +11,21 @@
     href="https://fonts.googleapis.com/css2?family=Domine:wght@400..700&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
-  <link rel="icon" href="assets/icons/owl-favicon.png" />
-  <title>Profile | Ethan Cloin</title>
+  <link rel="icon" href="assets/icons/favicon-16x16.png" />
+  <title> Ethan Cloin | Profile</title>
 </head>
 
 <body class="bg-parchment-light">
   <div class="flex h-screen flex-col pb-0 md:container md:mx-auto md:w-2/3 ">
     <div
-      class="fixed flex w-full border-b-2 border-sienna-700 bg-parchment-light p-2 pt-5 md:left-1/3 md:w-2/3 md:-translate-x-1/4 md:transform">
-      <nav class="flex h-8 w-full items-center justify-between p-3 pb-0 text-fern-700 ">
+      class="fixed flex w-full border-b-2 border-sienna-700 z-50 bg-parchment-light p-2 pt-5 md:left-1/3 md:w-2/3 md:-translate-x-1/4 md:transform">
+      <nav class="flex h-4 w-full items-center justify-between p-3 pb-0 text-fern-700">
         <p class="text-lg font-semibold md:text-xl">Ethan Cloin</p>
         <div class="flex w-3/5 justify-around text-sm md:text-lg">
-          <p>Experience</p>
-          <p>About</p>
-          <p>Contact</p>
+          <p><a href="#About" class="hover:text-fern-500 hover:drop-shadow-md">About</a></p>
+          <p><a href="#Experience" class="hover:text-fern-500 hover:drop-shadow-md">Experience</a></p>
+          <p><a href="#Projects" class="hover:text-fern-500 hover:drop-shadow-md">Projects</a></p>
+          <!-- TODO: Add a ref and content for a contact form -->
         </div>
       </nav>
     </div>
@@ -42,107 +43,201 @@
       <p class="text-sm font-extrabold text-fern-700 md:text-lg">BUILDING WEB APPLICATIONS IN
         BOSTON, MA</p>
     </div>
+    <p class="text-center mt-5 text-sage-700 md:text-lg ">
+      <img class="inline m-1" src="assets/icons/download.svg" height="18px" width="18px">
+      <a class="hover:text-sage-500 border-b mr-2 border-b-fern-700" href="/assets/documents/Ethan Cloin Resume.pdf"
+        download>Resume</a>
+      |
+      <a class="hover:text-sage-500 border-b ml-2 border-b-fern-700" href="https://linkedin.com/in/ethancloin"
+        target="_blank" rel="noopener noreferrer">LinkedIn</a><img class="inline m-1"
+        src="assets/icons/external-link.svg" height="18px" width="18px">
+    </p>
   </div>
 
-  <section class="pl-6 pr-4 text-fern-800 md:container md:mx-auto md:w-2/3 md:px-16">
-    <h1 class="w-full text-center text-3xl text-cocoa-600/90">A Bit About Me</h1>
-    <section class="mt-8">
-      <h2 class="mb-2 w-fit border-b border-b-cocoa-700 text-xl font-semibold">My Approach</h2>
-      <div class="text-[16px]">
-        <p class="mb-4">I want to understand <em>how things work</em>.<br /></p>
-        <p class="mb-4">Specifically, I want to understand your <strong>mission</strong>, your <strong>process</strong>,
-          and your <span class="text-sienna-800"><strong>technology</strong></span>.<br /></p>
-        <p>My skill set <em>(and mindset)</em> could be precisely the tools you need to solve your problem.</p>
-      </div>
+  <div class="max-w-screen-md mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="About" class="scroll-mt-12 text-fern-800 mt-5">
+      <h1 class="w-full text-center text-3xl text-cocoa-600/90">A Bit About Me</h1>
+      <section class="mt-8">
+        <h2 class="mb-2 w-fit border-b border-b-cocoa-700 text-xl font-semibold">My Approach</h2>
+        <div class="text-[16px]">
+          <p class="mb-4">I want to understand <em>how things work</em>.<br /></p>
+          <p class="mb-4">Specifically, I want to understand your <strong>mission</strong>, your
+            <strong>process</strong>,
+            and your <span class="text-sienna-800"><strong>technology</strong></span>.<br />
+          </p>
+          <p>My skill set <em>(and mindset)</em> could be precisely the tools you need to solve your problem.</p>
+        </div>
+      </section>
+      <section class="mt-8">
+        <h2 class="mb-2 w-fit border-b border-b-cocoa-700 text-xl font-semibold">My Work</h2>
+        <div class="text-[16px]">
+          <p class="mb-4">I am a fullstack web developer, contributing the the Black Diamond Wealth Platform.<br /></p>
+          <p class="mb-4">In this capacity, I write programs which interact with our databases, message queues, ETL
+            pipelines, and <em>(of course)</em> the client web browser.<br></p>
+        </div>
+      </section>
+      <section class="mt-8">
+        <h2 class="mb-2 w-fit border-b border-b-cocoa-700 text-xl font-semibold">My Drive</h2>
+        <div claTass="text-[16px]">
+          <p class="mb-4">Beyond the responsibilities of my employment, I am <span class="text-sienna-800">building
+            </span><em>relentlessly</em>.<br /></p>
+          <p class="mb-4">I take on personal projects to challenge myself with new technologies.<br /></p>
+          <p class="mb-4">I seek out other engineers and designers to <em>collaborate</em> and build my network.<br />
+          </p>
+          <p class="mb-4">I dedicate time to reading books, papers, and articles, <span
+              class="text-sienna-800">perpetually building</span> a firmer
+            understanding of software architecture, system design, and web design.<br /></p>
+        </div>
+      </section>
     </section>
-    <section class="mt-8">
-      <h2 class="mb-2 w-fit border-b border-b-cocoa-700 text-xl font-semibold">My Work</h2>
-      <div class="text-[16px]">
-        <p class="mb-4">I am a fullstack web developer, contributing the the Black Diamond Wealth Platform.<br /></p>
-        <p class="mb-4">In this capacity, I write programs which interact with our databases, message queues, ETL
-          pipelines, and <em>(of course)</em> the client web browser.<br></p>
-      </div>
-    </section>
-    <section class="mt-8">
-      <h2 class="mb-2 w-fit border-b border-b-cocoa-700 text-xl font-semibold">My Drive</h2>
-      <div claTass="text-[16px]">
-        <p class="mb-4">Beyond the responsibilities of my employment, I am <span class="text-sienna-800">building
-          </span><em>relentlessly</em>.<br /></p>
-        <p class="mb-4">I take on personal projects to challenge myself with new technologies.<br /></p>
-        <p class="mb-4">I seek out other engineers and designers to <em>collaborate</em> and build my network.<br /></p>
-        <p class="mb-4">I dedicate time to reading books, papers, and articles, <span
-            class="text-sienna-800">perpetually building</span> a firmer
-          understanding of software architecture, system design, and web design.<br /></p>
-      </div>
-    </section>
-  </section>
 
-  <section class="mx-4 text-fern-800 md:container md:mx-auto md:w-2/3 md:px-16">
-    <h1 class="mb-12 mt-8 w-full text-center text-3xl text-cocoa-600/90 text-sage-700">My Experience</h1>
-    <div id="tabbed-view" class="h-[500px] w-full">
-      <div id="tab-list" class="flex items-center justify-evenly px-2 uppercase text-fern-800">
-        <span id="black-diamond" class="cursor-pointer border-b-2 border-sienna-700 text-sienna-600"
-          onclick="displayTab(this)">Black
-          Diamond</span>
-        <span id="pax" class="cursor-pointer border-b-2 border-fern-800" onclick="displayTab(this)">Pax
-          Technology</span>
-        <span id="hazlnut" class="cursor-pointer border-b-2 border-fern-800" onclick="displayTab(this)">Hazlnut,
-          LLC</span>
-      </div>
-      <div
-        class="black-diamond my-3 flex h-48 w-full rounded-md border border-fern-800 bg-parchment-light p-4 drop-shadow-md"
-        data-exp-card>
-        <div class="flex w-full flex-col">
-          <img src="assets/icons/diamond-wealth-svgrepo-com.svg" width="36px" height="36px" />
-          <p class="pt-3 text-xl text-sage-800">Software Engineer</p>
-          <p class="text-md pt-3">
-            Fullstack web development wrangling high volumes of financial data.
-          </p>
+    <section id="Experience" class="scroll-mt-12 text-fern-800">
+      <h1 class="mb-12 mt-8 w-full text-center text-3xl text-cocoa-600/90 ">My Experience
+      </h1>
+      <div id="tabbed-view" class="h-fit w-full">
+        <div id="tab-list" class="flex items-center justify-evenly px-2 uppercase text-fern-800">
+          <span id="black-diamond" class="cursor-pointer border-b-2 border-sienna-700 text-sienna-600"
+            onclick="displayTab(this)">Black
+            Diamond</span>
+          <span id="pax" class="cursor-pointer border-b-2 border-fern-800" onclick="displayTab(this)">Pax
+            Technology</span>
+          <span id="hazlnut" class="cursor-pointer border-b-2 border-fern-800" onclick="displayTab(this)">Hazlnut,
+            LLC</span>
         </div>
-      </div>
-      <div
-        class="pax my-3 flex hidden h-48 w-full rounded-md border border-fern-800 bg-parchment-light p-4 drop-shadow-md"
-        data-exp-card>
-        <div class="flex w-full flex-col">
-          <img src="assets/icons/payment-card-svgrepo-com.svg" width="36px" height="36px" />
-          <p class="pt-3 text-xl text-sage-800">Payment Processing</p>
-          <p class="text-md pt-3">
-            Mobile and web development, supporting a mobile Point of Sale and
-            merchant portal.
-          </p>
+        <div
+          class="black-diamond my-3 flex min-h-52 w-full rounded-md border border-fern-800 bg-parchment-light p-4 drop-shadow-md"
+          data-exp-card>
+          <div class="flex w-full flex-col">
+            <img src="assets/icons/diamond-wealth-svgrepo-com.svg" width="36px" height="36px" />
+            <p class="pt-3 text-xl text-sage-800">Software Engineer - Wealth Management</p>
+            <p class="text-md pt-3">
+              Fullstack web development wrangling high volumes of financial data. 2 years of experience
+              in a distributed system, primarily .NET and SQLServer.
+            </p>
+          </div>
         </div>
-      </div>
-      <div
-        class="hazlnut my-3 flex hidden h-48 w-full rounded-md border border-fern-800 bg-parchment-light p-4 drop-shadow-md"
-        data-exp-card>
-        <div class="flex w-full flex-col">
-          <img src="assets/icons/hamburger-svgrepo-com.svg" width="36px" height="36px" />
-          <p class="pt-3 text-xl text-sage-800">Restaurant Technology</p>
-          <p class="text-md pt-3">
-            Supported software for online and mobile ordering, building
-            automations for internal tasks.
-          </p>
+        <div
+          class="pax my-3 flex hidden min-h-52 w-full rounded-md border border-fern-800 bg-parchment-light p-4 drop-shadow-md"
+          data-exp-card>
+          <div class="flex w-full flex-col">
+            <img src="assets/icons/payment-card-svgrepo-com.svg" width="36px" height="36px" />
+            <p class="pt-3 text-xl text-sage-800">Software Engineer - Payment Processing</p>
+            <p class="text-md pt-3">
+              Mobile and web development, supporting a mobile Point of Sale and
+              merchant portal.
+            </p>
+          </div>
         </div>
-      </div>
-  </section>
-  <script>
-    const selectedCss = "cursor-pointer border-b-2 border-cocoa-700 text-cocoa-600";
-    const unselectedCss = "cursor-pointer border-b-2 border-fern-800";
+        <div
+          class="hazlnut my-3 flex hidden min-h-52 w-full rounded-md border border-fern-800 bg-parchment-light p-4 drop-shadow-md"
+          data-exp-card>
+          <div class="flex w-full flex-col">
+            <img src="assets/icons/hamburger-svgrepo-com.svg" width="36px" height="36px" />
+            <p class="pt-3 text-xl text-sage-800">Software Support - Restaurant Technology</p>
+            <p class="text-md pt-3">
+              Supported software for online and mobile ordering, building
+              automations for internal tasks.
+            </p>
+          </div>
+        </div>
+    </section>
 
-    function displayTab(selectedTab) {
-      const tabs = document.querySelectorAll("#tab-list span")
-      tabs.forEach(t => t.classList = unselectedCss);
-      selectedTab.className = selectedCss;
-      // TODO: Update this to also change the value of #tab-content element
-      const experienceCards = document.querySelectorAll("[data-exp-card]");
-      experienceCards.forEach(c => {
-        c.classList.add("hidden");
-        if (c.classList.contains(selectedTab.id)) {
-          c.classList.remove("hidden");
-        }
-      });
-    }
-  </script>
+    <div id="Projects" class="scroll-mt-12 text-fern-800">
+      <section class="mb-12 mt-8 w-full text-center text-3xl text-cocoa-600/90">My Projects
+        <div class="flex flex-col gap-3 text-fern-700 md:max-h-60 md:flex-row">
+          <div class="my-3 flex md:w-1/3 rounded-md border border-fern-800 bg-parchment-light p-4 drop-shadow-md">
+            <div class="flex w-full flex-col">
+              <p class="pt-3 text-xl text-sienna-600"><a href="https://breed-detector.ethancloin.xyz/" target="_blank"
+                  rel="noopener noreferrer">ML Dog Breed Detector
+                  <img class="inline" src="assets/icons/external-link.svg" width="16px" height="16px" />
+                </a>
+              </p>
+              <p class="text-sm pt-3">
+                Classification Project for Machine Learning course, built using Transfer Learning.
+              </p>
+              <p class="text-sm pt-3 mt-auto">
+                <a class="text-sage-900 border-b-sage-900 border-b"
+                  href="https://github.com/ethancloin/dog-breed-classifier/" target="_blank"
+                  rel="noopener noreferrer">Source Code
+                  <img class="inline" src="assets/icons/external-link.svg" width="16px" height="16px" />
+                </a>
+              </p>
+            </div>
+          </div>
+
+          <div class="my-3 flex md:w-1/3 rounded-md border border-fern-800 bg-parchment-light p-4 drop-shadow-md">
+            <div class="flex w-full flex-col">
+              <p class="pt-3 text-xl text-sienna-600">
+                <a href="https://www.supplyify.org/" target="_blank" rel="noopener noreferrer">Supplify
+                  <img class="inline" src="assets/icons/external-link.svg" width="16px" height="16px" />
+                </a>
+              </p>
+              <p class="text-sm pt-3">
+                Order Management System in early stages of development.
+              </p>
+              <p class="text-sm pt-3 mt-auto">
+                <a href="https://github.com/ethancloin/supplyify/" target="_blank" rel="noopener noreferrer"
+                  class="text-sage-900 border-b-sage-900 border-b">Source Code
+                  <img class="inline" src="assets/icons/external-link.svg" width="16px" height="16px" />
+                </a>
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="my-3 flex h-full md:w-1/3 rounded-md border border-fern-800 bg-parchment-light p-4 drop-shadow-md">
+            <div class="flex w-full flex-col">
+              <p class="pt-3 text-xl text-sienna-600">
+                Tutor Finder
+              </p>
+              <p class="text-sm pt-3 mt-auto">
+                Application to display tutor information and support lesson bookings. Built in 6 weeks for a
+                freelance client POC.
+              </p>
+              <p class="text-sm pt-3">
+                <a class="text-sage-900 mt-auto border-b-sage-900 border-b" target="_blank" rel="noopener noreferrer"
+                  href="https://github.com/EthanCloin/giron-tutoring-poc">Source Code
+                  <img class="inline" src="assets/icons/external-link.svg" width="16px" height="16px" />
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="text-xl text-center text-fern-700">
+        Also check out <span><a class="text-sienna-600 border-b border-b-sienna-600"
+            href="https://ethancloin.notion.site/Writings-of-Ethan-Cloin-1ef945e0eaf080cfb49eda6b23de31a6"
+            target="_blank">the blog posts and learning resources</a></span> that I'm creating!
+      </div>
+      <div class="flex justify-center items-center mt-5">
+        <iframe class="w-fit h-1/5" src="https://www.youtube.com/embed/Hdt5vwPCM4E?si=smBgJpFLzDWs6m7B"
+          title="YouTube video player" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+
+    </div>
+
+    <script>
+      const selectedCss = "cursor-pointer border-b-2 border-sienna-700 text-sienna-600";
+      const unselectedCss = "cursor-pointer border-b-2 border-fern-800";
+
+      function displayTab(selectedTab) {
+        const tabs = document.querySelectorAll("#tab-list span")
+        tabs.forEach(t => t.classList = unselectedCss);
+        selectedTab.className = selectedCss;
+        // TODO: Update this to also change the value of #tab-content element
+        const experienceCards = document.querySelectorAll("[data-exp-card]");
+        experienceCards.forEach(c => {
+          c.classList.add("hidden");
+          if (c.classList.contains(selectedTab.id)) {
+            c.classList.remove("hidden");
+          }
+        });
+      }
+    </script>
 </body>
+<footer class="my-12">© Ethan Cloin 2025</footer>
 
 </html>
