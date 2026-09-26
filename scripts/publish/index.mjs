@@ -141,21 +141,34 @@ export function publish({ noteRef, vaultPath, dryRun = false, doGit = true, doBu
 
   git(["fetch", "origin", base]);
   const current = git(["rev-parse", "--abbrev-ref", "HEAD"]);
-  const exists = spawnSync("git", ["rev-parse", "--verify", "--quiet", branch], { cwd: REPO }).status === 0;
-  if (exists) git(["checkout", branch]);
-  else git(["checkout", "-b", branch, `origin/${base}`]);
+  const hasGh = spawnSync("gh", ["--version"], { stdio: "ignore" }).status === 0;
+  // Reuse the branch only while its pull request is still open; otherwise start fresh from the base.
+  let openPr = null;
+  if (hasGh) {
+    const r = spawnSync("gh", ["pr", "list", "--head", branch, "--state", "open", "--json", "url", "-q", ".[0].url"], { cwd: REPO, encoding: "utf8" });
+    if (r.status === 0 && r.stdout.trim()) openPr = r.stdout.trim();
+  }
+  if (openPr) {
+    git(["checkout", branch]);
+    spawnSync("git", ["pull", "--ff-only", "origin", branch], { cwd: REPO, stdio: "ignore" });
+  } else {
+    git(["checkout", "-B", branch, `origin/${base}`]);
+  }
   // The generated files were written on the previous branch's tree; they are untracked/modified, so they carry over.
   git(["add", "--", ...changed]);
+  if (!git(["status", "--porcelain", "--", ...changed])) {
+    throw new Error("nothing changed: the published post already matches the note");
+  }
   const isUpdate = spawnSync("git", ["cat-file", "-e", `origin/${base}:${changed[0]}`], { cwd: REPO }).status === 0;
   const subject = `${isUpdate ? "Update" : "Publish"}: ${meta.title}`;
   git(["commit", "-m", `${subject}\n\nSource: ${source}`]);
-  git(["push", "-u", "origin", branch], { stdio: "inherit" });
+  // A fresh branch after a merged PR diverges from the old remote branch; --force-with-lease keeps that safe.
+  git(["push", "-u", "--force-with-lease", "origin", branch], { stdio: "inherit" });
 
   let prUrl = null;
-  if (spawnSync("gh", ["--version"], { stdio: "ignore" }).status === 0) {
-    const existing = spawnSync("gh", ["pr", "view", branch, "--json", "url", "-q", ".url"], { cwd: REPO, encoding: "utf8" });
-    if (existing.status === 0 && existing.stdout.trim()) {
-      prUrl = existing.stdout.trim();
+  if (hasGh) {
+    if (openPr) {
+      prUrl = openPr;
       log(`pull request already open: ${prUrl}`);
     } else {
       const bodyText = [
