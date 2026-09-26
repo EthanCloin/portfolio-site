@@ -40,7 +40,6 @@ const currentPath = Astro.url.pathname;
     <meta name="author" content={SITE.author} />
     <link rel="canonical" href={canonicalURL} />
     <link rel="icon" href="/assets/icons/favicon-16x16.png" />
-    <link rel="alternate" type="application/rss+xml" title={SITE.blogTitle} href={new URL("/blog/rss.xml", Astro.site)} />
     <link rel="sitemap" href="/sitemap-index.xml" />
 
     <!-- Open Graph -->
@@ -78,7 +77,6 @@ const currentPath = Astro.url.pathname;
           <li><a href="/#About">About</a></li>
           <li><a href="/#Projects">Projects</a></li>
           <li><a href="/blog" aria-current={currentPath.startsWith("/blog") ? "page" : undefined}>Blog</a></li>
-          <li><a href="/blog/rss.xml" title="RSS feed">RSS</a></li>
         </ul>
       </nav>
     </header>
@@ -86,7 +84,7 @@ const currentPath = Astro.url.pathname;
       <slot />
     </main>
     <footer class="site-footer">
-      © {new Date().getFullYear()} {SITE.author} · <a href="/blog/rss.xml">RSS</a> · <a href="https://github.com/ethancloin">GitHub</a>
+      © {new Date().getFullYear()} {SITE.author} · <a href="https://github.com/ethancloin">GitHub</a>
     </footer>
   </body>
 </html>

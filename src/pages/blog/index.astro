@@ -17,7 +17,7 @@ const tags = [...new Set(posts.flatMap((p) => p.data.tags))].sort();
     </ul>
   )}
   {posts.length === 0 ? (
-    <p>Nothing published yet. Check back soon, or subscribe to the <a href="/blog/rss.xml">RSS feed</a>.</p>
+    <p>Nothing published yet. Check back soon.</p>
   ) : (
     <ul class="post-list">
       {posts.map((post) => (
