@@ -1,0 +1,14 @@
+---
+import FormattedDate from "./FormattedDate.astro";
+interface Props { date: Date; updated?: Date; tags: string[] }
+const { date, updated, tags } = Astro.props;
+---
+<div class="meta">
+  <FormattedDate date={date} />
+  {updated && updated.getTime() !== date.getTime() && <span> · updated <FormattedDate date={updated} /></span>}
+  {tags.length > 0 && (
+    <ul class="tags" style="margin-top:0.5rem">
+      {tags.map((t) => <li><a class="tag" href={`/blog/tags/${encodeURIComponent(t)}`}>#{t}</a></li>)}
+    </ul>
+  )}
+</div>

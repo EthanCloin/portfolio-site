@@ -1,0 +1,32 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostMeta from "../../components/PostMeta.astro";
+import { SITE } from "../../site";
+import { getPosts, postPath } from "../../lib/posts";
+
+const posts = await getPosts();
+const tags = [...new Set(posts.flatMap((p) => p.data.tags))].sort();
+---
+
+<BaseLayout title={SITE.blogTitle} description={SITE.description}>
+  <h1>Writing</h1>
+  <p class="lede">{SITE.description}</p>
+  {tags.length > 0 && (
+    <ul class="tags" style="margin-bottom:1.5rem">
+      {tags.map((t) => <li><a class="tag" href={`/blog/tags/${encodeURIComponent(t)}`}>#{t}</a></li>)}
+    </ul>
+  )}
+  {posts.length === 0 ? (
+    <p>Nothing published yet. Check back soon, or subscribe to the <a href="/blog/rss.xml">RSS feed</a>.</p>
+  ) : (
+    <ul class="post-list">
+      {posts.map((post) => (
+        <li>
+          <h2><a href={postPath(post)}>{post.data.title}</a></h2>
+          <PostMeta date={post.data.date} tags={post.data.tags} />
+          <p>{post.data.description}</p>
+        </li>
+      ))}
+    </ul>
+  )}
+</BaseLayout>
