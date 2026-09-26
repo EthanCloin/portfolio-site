@@ -4,6 +4,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import PostMeta from "../../components/PostMeta.astro";
 import { SITE } from "../../site";
 import { getPosts } from "../../lib/posts";
+import { ogImagePath } from "../../lib/og";
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -19,7 +20,7 @@ const hasMath = post.body?.includes("$") ?? false;
 <BaseLayout
   title={`${title} | ${SITE.title}`}
   description={description}
-  image={image}
+  image={image ?? ogImagePath(post.data.slug)}
   type="article"
   publishedTime={date}
   modifiedTime={updated}
