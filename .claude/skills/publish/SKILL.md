@@ -22,7 +22,7 @@ Turn a note from the Obsidian vault into a post at `https://ethancloin.xyz/blog/
    npm run publish-note -- "$ARGUMENTS" --dry-run
    ```
    Read the generated Markdown and the `warning:` lines. Common warnings: an image the vault can't find, or a wikilink to a note that is `ready` but not yet published (it will be linked as if it were).
-2. If the note fails validation, tell the user exactly which frontmatter fields are missing or wrong and stop. Do not edit the note yourself unless asked; the vault is the user's writing space.
+2. If the note fails validation, tell the user exactly which frontmatter fields are missing or wrong and stop. If the preview shows syntax that came through as literal text, point the user to `docs/writing-guide.md`. Do not edit the note yourself unless asked; the vault is the user's writing space.
 3. If the preview looks right, publish:
    ```bash
    npm run publish-note -- "$ARGUMENTS"
@@ -36,7 +36,8 @@ Turn a note from the Obsidian vault into a post at `https://ethancloin.xyz/blog/
 - `![[image.png|alt]]` → copied image; `![[Note#Heading]]` → that section inlined.
 - `> [!type] Title` callouts → `<aside class="callout callout-type">`; `==text==` → `<mark>`; `%% comments %%` removed.
 - Code blocks and inline code are never modified.
-- A leading `# Title` that duplicates the title is dropped.
+- A leading `# Title` that duplicates the title is dropped. `subtitle:` in frontmatter renders under the title.
+- Full contract, including what is not supported (Mermaid, Dataview): `docs/writing-guide.md`.
 
 ## Do not
 

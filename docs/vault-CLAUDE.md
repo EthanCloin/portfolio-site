@@ -20,6 +20,7 @@ date: YYYY-MM-DD
 description: One or two sentences for the listing, RSS, and link previews (≤300 chars).
 tags: [lowercase, topical]
 title: Optional; defaults to the filename
+subtitle: Optional; shown under the title
 image: optional-cover.png   # an attachment name, for link previews
 ```
 
@@ -28,6 +29,7 @@ Notes carrying `private: true` or `#private` are refused by the publisher even i
 Conversion rules: `[[wikilinks]]` to other published posts become links, otherwise plain text;
 `![[image.png]]` embeds are copied; `> [!type]` callouts, `==highlights==` and `%% comments %%`
 are handled; code blocks are untouched. Draft anywhere in the vault; the publisher finds notes by name.
+The full list of what converts, and what does not (Mermaid, Dataview), is docs/writing-guide.md in the site repo.
 
 To publish: in the portfolio-site repository run `/publish <note name>` (Claude Code) or
 `npm run publish-note -- "<note name>"`. It opens a pull request; merging deploys.

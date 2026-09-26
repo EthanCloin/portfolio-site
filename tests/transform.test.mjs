@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   stripComments, convertHighlights, convertCallouts, convertLinks, protectCode, transformBody,
-  validateFrontmatter, parseWikiTarget, stripLeadingTitle,
+  validateFrontmatter, parseWikiTarget, stripLeadingTitle, renderFrontmatter,
 } from "../scripts/publish/transform.mjs";
 
 test("strips inline and block comments", () => {
@@ -67,4 +67,36 @@ test("frontmatter contract", () => {
   assert.match(priv.errors[0], /private/);
   const priv2 = validateFrontmatter({ status: "ready", slug: "a", date: "2026-01-02", description: "d", private: true }, { fallbackTitle: "T" });
   assert.equal(priv2.ok, false);
+});
+
+import { stripBlockIds, convertInlineFootnotes, convertMarkdownLinks } from "../scripts/publish/transform.mjs";
+
+test("block ids are stripped and block-ref links lose their anchor", () => {
+  assert.equal(stripBlockIds("A paragraph. ^abc-123\nNext ^x\nno id here"), "A paragraph.\nNext\nno id here");
+  const opts = { resolveAttachment: () => null, resolvePostLink: (n) => (n === "Pub" ? { slug: "pub" } : null), resolveTransclusion: () => null, warn: () => {} };
+  assert.equal(convertLinks("[[Pub#^blockid|see]] [[#^local]]", opts), "[see](/blog/pub) local");
+});
+
+test("inline footnotes become numbered footnotes", () => {
+  assert.equal(convertInlineFootnotes("Claim.^[Source here] More.^[Two]"),
+    "Claim.[^inline-1] More.[^inline-2]\n\n[^inline-1]: Source here\n[^inline-2]: Two\n");
+  assert.equal(convertInlineFootnotes("no notes"), "no notes");
+});
+
+test("markdown-style vault links and images are resolved", () => {
+  const opts = {
+    resolveAttachment: (n) => (n === "pic.png" ? { publicPath: "/blog/images/s/pic.png" } : null),
+    resolvePostLink: (n) => (n === "Pub" ? { slug: "pub" } : null),
+    warn: () => {},
+  };
+  assert.equal(convertMarkdownLinks("![](Wiki/raw/pic.png) ![x](https://e.com/a.png) ![y](nope.png)", opts),
+    "![pic](/blog/images/s/pic.png) ![x](https://e.com/a.png) ![y](nope.png)");
+  assert.equal(convertMarkdownLinks("[a](Pub.md) [b](Efforts/Pub.md#Some%20Heading) [c](Other.md) [d](https://x.y) [e](#anchor) [f](file.pdf)", opts),
+    "[a](/blog/pub) [b](/blog/pub#some-heading) c [d](https://x.y) [e](#anchor) [f](file.pdf)");
+});
+
+test("subtitle passes through the frontmatter contract", () => {
+  const r = validateFrontmatter({ status: "ready", slug: "a", date: "2026-01-02", description: "d", subtitle: " Sub " }, { fallbackTitle: "T" });
+  assert.equal(r.meta.subtitle, "Sub");
+  assert.match(renderFrontmatter(r.meta, { source: "x.md" }), /^---\ntitle: "T"\nsubtitle: "Sub"\nslug: a\n/);
 });

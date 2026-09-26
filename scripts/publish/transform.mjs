@@ -151,19 +151,68 @@ export function convertLinks(text, opts) {
   // Wikilinks: [[Note]] / [[Note|Alias]] / [[Note#Heading]]
   text = text.replace(/\[\[([^\]]+)\]\]/g, (_, inner) => {
     const { target, heading, alias } = parseWikiTarget(inner);
-    const label = alias ?? (heading && !target ? heading : target);
+    const isBlockRef = heading?.startsWith("^");
+    const label = alias ?? (heading && !target ? heading.replace(/^\^/, "") : target);
     if (!target) {
-      // [[#Heading]] links within the same note.
-      return heading ? `[${label}](#${headingToAnchor(heading)})` : label;
+      // [[#Heading]] links within the same note; block refs ([[#^id]]) have no HTML anchor.
+      return heading && !isBlockRef ? `[${label}](#${headingToAnchor(heading)})` : label;
     }
     const post = opts.resolvePostLink(target);
     if (post) {
-      const anchor = heading ? `#${headingToAnchor(heading)}` : "";
+      const anchor = heading && !isBlockRef ? `#${headingToAnchor(heading)}` : "";
       return `[${label}](/blog/${post.slug}${anchor})`;
     }
     return label; // unpublished note: keep the words, drop the link
   });
 
+  return text;
+}
+
+/** Remove Obsidian block identifiers (" ^abc123" at end of a line / paragraph). */
+export function stripBlockIds(text) {
+  return text.replace(/[ \t]+\^[A-Za-z0-9-]+[ \t]*$/gm, "");
+}
+
+/** Obsidian inline footnotes ^[text] → GFM numbered footnotes appended at the end. */
+export function convertInlineFootnotes(text) {
+  const notes = [];
+  const out = text.replace(/\^\[([^\]]+)\]/g, (_, body) => {
+    notes.push(body.trim());
+    return `[^inline-${notes.length}]`;
+  });
+  if (notes.length === 0) return text;
+  return out.trimEnd() + "\n\n" + notes.map((n, i) => `[^inline-${i + 1}]: ${n}`).join("\n") + "\n";
+}
+
+const isExternal = (href) => /^(?:[a-z][a-z0-9+.-]*:|\/\/|#|\/)/i.test(href);
+
+/**
+ * Markdown-style links and images whose target is a vault file:
+ *   ![alt](Wiki/raw/pic.png)  → copied image
+ *   [text](Some%20Note.md)    → post link or plain text
+ * External URLs, absolute paths and anchors are left alone.
+ */
+export function convertMarkdownLinks(text, opts) {
+  const warn = opts.warn ?? (() => {});
+  text = text.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g, (m, alt, href) => {
+    if (isExternal(href)) return m;
+    const name = decodeURIComponent(href.split("/").pop());
+    const att = opts.resolveAttachment(name);
+    if (!att) {
+      warn(`image not found in vault: ${href}`);
+      return m;
+    }
+    return `![${alt || name.replace(/\.[^.]+$/, "")}](${att.publicPath})`;
+  });
+  text = text.replace(/(?<!!)\[([^\]]+)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g, (m, label, href) => {
+    if (isExternal(href)) return m;
+    const [file, heading] = decodeURIComponent(href).split("#");
+    if (!/\.md$/i.test(file) && /\.[a-z0-9]{2,5}$/i.test(file)) return m; // some other file type: leave as-is
+    const post = opts.resolvePostLink(file.replace(/\.md$/i, "").split("/").pop());
+    if (!post) return label;
+    const anchor = heading && !heading.startsWith("^") ? `#${headingToAnchor(heading)}` : "";
+    return `[${label}](/blog/${post.slug}${anchor})`;
+  });
   return text;
 }
 
@@ -174,9 +223,12 @@ export function transformBody(body, { title, ...linkOpts }) {
   const { text: protectedText, restore } = protectCode(text);
   let t = protectedText;
   t = stripComments(t);
+  t = stripBlockIds(t);
   t = convertCallouts(t);
   t = convertLinks(t, linkOpts);
+  t = convertMarkdownLinks(t, linkOpts);
   t = convertHighlights(t);
+  t = convertInlineFootnotes(t);
   t = restore(t);
   return t.replace(/\n{3,}/g, "\n\n").trim() + "\n";
 }
@@ -210,6 +262,7 @@ export function validateFrontmatter(fm, { fallbackTitle }) {
   if (!Array.isArray(tags)) errors.push("tags must be a list");
   meta.tags = Array.isArray(tags) ? tags.map((t) => String(t).replace(/^#/, "").trim()).filter(Boolean) : [];
   meta.title = String(fm.title ?? fallbackTitle).trim();
+  if (fm.subtitle) meta.subtitle = String(fm.subtitle).trim();
   if (fm.image || fm.cover) meta.image = String(fm.image ?? fm.cover);
   return { ok: errors.length === 0, errors, meta };
 }
@@ -224,6 +277,7 @@ export function renderFrontmatter(meta, { source }) {
   const lines = [
     "---",
     `title: ${q(meta.title)}`,
+    ...(meta.subtitle ? [`subtitle: ${q(meta.subtitle)}`] : []),
     `slug: ${meta.slug}`,
     `date: ${toISODate(meta.date)}`,
   ];
