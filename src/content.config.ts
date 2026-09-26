@@ -7,6 +7,7 @@ const blog = defineCollection({
   loader: glob({ base: "./src/content/blog", pattern: "**/*.md" }),
   schema: z.object({
     title: z.string(),
+    subtitle: z.string().optional(),
     slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "slug must be kebab-case"),
     date: z.coerce.date(),
     updated: z.coerce.date().optional(),
