@@ -1,36 +1,34 @@
-# Vault guide for agents
+# Publishing section for the vault's CLAUDE.md
 
-> Copy this file to the root of the Obsidian vault as `CLAUDE.md` (and optionally `AGENTS.md`).
-> Obsidian Sync carries it to every device and to the droplet, so every agent session,
-> wherever it runs, gets the same instructions. Edit it in Obsidian like any other note.
+The vault already has a `CLAUDE.md` describing the LLM-wiki system (ACE layout, page schema,
+ingest/surface/lint operations). Append the section below to it so agents on any device know
+how a note becomes a blog post. Obsidian Sync carries the file everywhere.
 
-This folder is Ethan's Obsidian vault. It is the canonical home for his notes and the source
-of his blog posts. Treat it as a writing space: read freely, edit carefully, never delete.
+```markdown
+## Publishing to ethancloin.xyz
 
-## Layout
+Some notes become public posts at https://ethancloin.xyz/blog. The site's repository
+(github.com/EthanCloin/portfolio-site) does the conversion; nothing in this vault is public
+until Ethan merges a pull request there.
 
-| Folder | Purpose | Agent guidance |
-|---|---|---|
-| `Blog/` | Articles. A note is publishable when its frontmatter has `status: ready`, `slug`, `date`, `description`, `tags`. | Draft and edit here. Publishing is done from the portfolio-site repo with `/publish <note>`. |
-| `LLM Wiki/` | Voice-note transcripts and the pages built from them: to-do lists, upcoming priorities, things to remember. | This is the folder to read when asked "what's on my plate", "what did I say about X", or to build/refresh a wiki page. |
-| `Attachments/` | Images and files embedded in notes. | Reference by filename with `![[name.png]]`. |
-| `.obsidian/` | App configuration. | Do not edit. |
+A note is publishable when its frontmatter has:
 
-Adjust the folder names above to match the vault.
+```yaml
+status: ready            # the human decision; never set this on Ethan's behalf
+slug: kebab-case-slug    # becomes /blog/<slug>
+date: YYYY-MM-DD
+description: One or two sentences for the listing, RSS, and link previews (≤300 chars).
+tags: [lowercase, topical]
+title: Optional; defaults to the filename
+image: optional-cover.png   # an attachment name, for link previews
+```
 
-## Conventions
+Notes carrying `private: true` or `#private` are refused by the publisher even if `status: ready`.
 
-- Frontmatter is YAML between `---` fences. Keep existing keys; add new ones at the end.
-- Links between notes use `[[Note Name]]`. Images use `![[file.png]]`. Callouts use `> [!note] Title`.
-- Dates are `YYYY-MM-DD`. Tags are a YAML list without `#`.
-- When summarising voice notes into wiki pages, keep the original transcript untouched and link
-  back to it from the page you build.
-- Never run `ob sync` or touch the sync service; the daemon handles synchronisation.
-- Do not publish (`status: ready`) on the user's behalf unless asked; flipping that field is a
-  human decision.
+Conversion rules: `[[wikilinks]]` to other published posts become links, otherwise plain text;
+`![[image.png]]` embeds are copied; `> [!type]` callouts, `==highlights==` and `%% comments %%`
+are handled; code blocks are untouched. Draft anywhere in the vault; the publisher finds notes by name.
 
-## Publishing flow
-
-1. Set `status: ready` plus `slug`, `date`, `description`, `tags` on the note.
-2. In the portfolio-site repository run `/publish <note>` (or `npm run publish-note -- "<note>"`).
-3. Review and merge the pull request; GitHub Actions deploys to https://ethancloin.xyz/blog.
+To publish: in the portfolio-site repository run `/publish <note name>` (Claude Code) or
+`npm run publish-note -- "<note name>"`. It opens a pull request; merging deploys.
+```

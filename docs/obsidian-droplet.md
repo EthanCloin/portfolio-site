@@ -35,8 +35,8 @@ Credentials live in that user's home directory and never in this repository.
 ## Pointing an agent at the vault
 
 - **On the droplet**: `sudo -iu obsidian` (or your own user, which is in the `obsidian` group and can
-  read the vault), `cd /srv/vault`, run `claude`. A `CLAUDE.md` at the vault root (synced with the
-  vault, see `docs/vault-CLAUDE.md`) tells any agent how the vault is organised.
+  read the vault), `cd /srv/vault`, run `claude`. The vault's own `CLAUDE.md` (synced with the vault) describes the
+  LLM-wiki system; `docs/vault-CLAUDE.md` has the publishing section to append to it.
 - **On a laptop/phone**: the Obsidian app already syncs the same vault locally; run the agent in that
   folder. The same `CLAUDE.md` applies because it is part of the vault.
 - **Publishing from the droplet**: clone this repository next to the vault

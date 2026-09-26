@@ -65,7 +65,7 @@ export class Vault {
     const matches = this.files.filter((f) => path.basename(f).toLowerCase() === want);
     if (matches.length === 0) return null;
     // Prefer files in a folder named like an attachments folder.
-    matches.sort((a, b) => Number(/attach|asset|image|media/i.test(b)) - Number(/attach|asset|image|media/i.test(a)));
+    matches.sort((a, b) => Number(/raw|attach|asset|image|media/i.test(b)) - Number(/raw|attach|asset|image|media/i.test(a)));
     return matches[0];
   }
 

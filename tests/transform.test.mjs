@@ -62,4 +62,9 @@ test("frontmatter contract", () => {
   const bad = validateFrontmatter({ status: "draft", slug: "Bad Slug", date: "nope", description: "" }, { fallbackTitle: "T" });
   assert.equal(bad.ok, false);
   assert.equal(bad.errors.length, 4);
+  const priv = validateFrontmatter({ status: "ready", slug: "a", date: "2026-01-02", description: "d", tags: ["x", "#private"] }, { fallbackTitle: "T" });
+  assert.equal(priv.ok, false);
+  assert.match(priv.errors[0], /private/);
+  const priv2 = validateFrontmatter({ status: "ready", slug: "a", date: "2026-01-02", description: "d", private: true }, { fallbackTitle: "T" });
+  assert.equal(priv2.ok, false);
 });

@@ -186,6 +186,10 @@ export function validateFrontmatter(fm, { fallbackTitle }) {
   const errors = [];
   const meta = {};
   if (fm.status !== "ready") errors.push(`status must be "ready" (got ${JSON.stringify(fm.status ?? null)})`);
+  const tagList = Array.isArray(fm.tags) ? fm.tags : typeof fm.tags === "string" ? fm.tags.split(/[,\s]+/) : [];
+  if (fm.private === true || tagList.some((t) => String(t).replace(/^#/, "") === "private")) {
+    errors.push("note is marked private (private: true or #private); refusing to publish");
+  }
   const slug = String(fm.slug ?? "").trim();
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) errors.push(`slug must be kebab-case (got ${JSON.stringify(fm.slug ?? null)})`);
   meta.slug = slug;
