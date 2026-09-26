@@ -45,7 +45,8 @@ function resolveVaultPath(cli, config) {
 }
 
 function git(args, opts = {}) {
-  return execFileSync("git", args, { cwd: REPO, encoding: "utf8", stdio: ["ignore", "pipe", "inherit"], ...opts }).trim();
+  // With stdio "inherit" execFileSync returns null; normalise to "" so callers can always .trim().
+  return (execFileSync("git", args, { cwd: REPO, encoding: "utf8", stdio: ["ignore", "pipe", "inherit"], ...opts }) ?? "").toString().trim();
 }
 
 export function publish({ noteRef, vaultPath, dryRun = false, doGit = true, doBuild = true, base = "main", log = console.error }) {
@@ -118,6 +119,31 @@ export function publish({ noteRef, vaultPath, dryRun = false, doGit = true, doBu
     return { outFile, copies, meta, output, warnings };
   }
 
+  // Git phase 1: get onto the publish branch BEFORE writing anything, so the
+  // clean-tree check and the branch switch never trip over the post itself.
+  const branch = `publish/${meta.slug}`;
+  const changed = [path.relative(REPO, outFile), ...copies.map(([, to]) => path.relative(REPO, to))];
+  let current = null;
+  let openPr = null;
+  const hasGh = spawnSync("gh", ["--version"], { stdio: "ignore" }).status === 0;
+  if (doGit) {
+    const dirty = git(["status", "--porcelain", "--untracked-files=no"]);
+    if (dirty) throw new Error(`working tree has uncommitted changes; commit or stash them first:\n${dirty}`);
+    git(["fetch", "origin", base]);
+    current = git(["rev-parse", "--abbrev-ref", "HEAD"]);
+    // Reuse the branch only while its pull request is still open; otherwise start fresh from the base.
+    if (hasGh) {
+      const r = spawnSync("gh", ["pr", "list", "--head", branch, "--state", "open", "--json", "url", "-q", ".[0].url"], { cwd: REPO, encoding: "utf8" });
+      if (r.status === 0 && r.stdout.trim()) openPr = r.stdout.trim();
+    }
+    if (openPr) {
+      git(["checkout", branch]);
+      spawnSync("git", ["pull", "--ff-only", "origin", branch], { cwd: REPO, stdio: "ignore" });
+    } else {
+      git(["checkout", "-B", branch, `origin/${base}`]);
+    }
+  }
+
   fs.mkdirSync(path.dirname(outFile), { recursive: true });
   fs.writeFileSync(outFile, output);
   for (const [from, to] of copies) {
@@ -134,29 +160,10 @@ export function publish({ noteRef, vaultPath, dryRun = false, doGit = true, doBu
 
   if (!doGit) return { outFile, copies, meta, output, warnings };
 
-  const branch = `publish/${meta.slug}`;
-  const changed = [path.relative(REPO, outFile), ...copies.map(([, to]) => path.relative(REPO, to))];
-  const dirty = git(["status", "--porcelain", "--untracked-files=no"]);
-  if (dirty) throw new Error(`working tree has uncommitted changes; commit or stash them first:\n${dirty}`);
-
-  git(["fetch", "origin", base]);
-  const current = git(["rev-parse", "--abbrev-ref", "HEAD"]);
-  const hasGh = spawnSync("gh", ["--version"], { stdio: "ignore" }).status === 0;
-  // Reuse the branch only while its pull request is still open; otherwise start fresh from the base.
-  let openPr = null;
-  if (hasGh) {
-    const r = spawnSync("gh", ["pr", "list", "--head", branch, "--state", "open", "--json", "url", "-q", ".[0].url"], { cwd: REPO, encoding: "utf8" });
-    if (r.status === 0 && r.stdout.trim()) openPr = r.stdout.trim();
-  }
-  if (openPr) {
-    git(["checkout", branch]);
-    spawnSync("git", ["pull", "--ff-only", "origin", branch], { cwd: REPO, stdio: "ignore" });
-  } else {
-    git(["checkout", "-B", branch, `origin/${base}`]);
-  }
-  // The generated files were written on the previous branch's tree; they are untracked/modified, so they carry over.
+  // Git phase 2: commit, push, open the pull request.
   git(["add", "--", ...changed]);
   if (!git(["status", "--porcelain", "--", ...changed])) {
+    if (current && current !== branch) git(["checkout", current]);
     throw new Error("nothing changed: the published post already matches the note");
   }
   const isUpdate = spawnSync("git", ["cat-file", "-e", `origin/${base}:${changed[0]}`], { cwd: REPO }).status === 0;
