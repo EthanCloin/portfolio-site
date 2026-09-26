@@ -10,7 +10,7 @@ and ask for it to be added.
 status: ready                 # required; the human decision to publish
 slug: from-programmer-to-director   # required; kebab-case; becomes /blog/<slug>
 date: 2026-09-26              # required
-description: One or two sentences (≤300 chars) for the listing, RSS, and link previews.  # required
+description: One or two sentences (≤300 chars) for the listing and link previews.  # required
 tags: [agents, engineering]   # required (may be [])
 title: From Programmer to Director   # optional; defaults to the file name
 subtitle: What changes when the code stops being yours   # optional; shown under the title

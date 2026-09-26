@@ -17,7 +17,7 @@ A note is publishable when its frontmatter has:
 status: ready            # the human decision; never set this on Ethan's behalf
 slug: kebab-case-slug    # becomes /blog/<slug>
 date: YYYY-MM-DD
-description: One or two sentences for the listing, RSS, and link previews (≤300 chars).
+description: One or two sentences for the listing and link previews (≤300 chars).
 tags: [lowercase, topical]
 title: Optional; defaults to the filename
 subtitle: Optional; shown under the title
