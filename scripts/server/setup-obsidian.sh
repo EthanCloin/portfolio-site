@@ -17,13 +17,13 @@ fi
 
 log "Node.js ${NODE_MAJOR}.x"
 if ! command -v node >/dev/null || [[ "$(node -p 'process.versions.node.split(".")[0]')" -lt "$NODE_MAJOR" ]]; then
-  apt-get update -qq
+  apt-get update -qq || echo "warning: some apt sources failed to refresh; continuing with the ones that did"
   apt-get install -y -qq ca-certificates curl gnupg
   install -d -m 0755 /etc/apt/keyrings
   curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg --yes
   echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODE_MAJOR}.x nodistro main" \
     > /etc/apt/sources.list.d/nodesource.list
-  apt-get update -qq
+  apt-get update -qq || echo "warning: some apt sources failed to refresh; continuing with the ones that did"
   apt-get install -y -qq nodejs
 fi
 node --version
@@ -80,7 +80,7 @@ if ! command -v gh >/dev/null; then
   chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
   echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
     > /etc/apt/sources.list.d/github-cli.list
-  apt-get update -qq && apt-get install -y -qq gh
+  (apt-get update -qq || true) && apt-get install -y -qq gh
 fi
 gh --version | head -1
 
