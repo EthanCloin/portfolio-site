@@ -1,22 +1,29 @@
 {
   "name": "portfolio-site",
-  "version": "1.0.0",
-  "description": "This site should be the primary hub for all my professional links, allowing people to get a good idea of my experience and skills at a glance. This includes my resume, professional email, and relevant social media profiles.",
-  "main": "index.js",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Ethan Cloin's personal site: hand-written homepage plus an Astro-built blog at /blog, fed from an Obsidian vault.",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "node --test tests/*.test.mjs",
+    "publish-note": "node scripts/publish/index.mjs",
+    "tailwind:homepage": "npx tailwindcss@3 -i main.css -o public/style.css --watch"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/EthanCloin/ethancloin.github.io.git"
+    "url": "git+https://github.com/EthanCloin/portfolio-site.git"
   },
-  "author": "",
+  "author": "Ethan Cloin",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/EthanCloin/ethancloin.github.io/issues"
-  },
-  "homepage": "https://github.com/EthanCloin/ethancloin.github.io#readme",
   "devDependencies": {
-    "tailwindcss": "^3.4.3"
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.3.5",
+    "tailwindcss": "^3.4.3",
+    "yaml": "^2.9.1"
   }
 }

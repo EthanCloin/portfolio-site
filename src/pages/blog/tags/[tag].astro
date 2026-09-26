@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PostMeta from "../../../components/PostMeta.astro";
+import { SITE } from "../../../site";
+import { getPosts, postPath } from "../../../lib/posts";
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  const tags = [...new Set(posts.flatMap((p) => p.data.tags))];
+  return tags.map((tag) => ({
+    params: { tag },
+    props: { tag, posts: posts.filter((p) => p.data.tags.includes(tag)) },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<BaseLayout title={`#${tag} | ${SITE.blogTitle}`} description={`Posts tagged #${tag} by ${SITE.author}.`}>
+  <h1>#{tag}</h1>
+  <p class="lede"><a href="/blog">← All posts</a></p>
+  <ul class="post-list">
+    {posts.map((post) => (
+      <li>
+        <h2><a href={postPath(post)}>{post.data.title}</a></h2>
+        <PostMeta date={post.data.date} tags={post.data.tags} />
+        <p>{post.data.description}</p>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>

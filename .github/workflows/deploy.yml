@@ -10,34 +10,36 @@ jobs:
     runs-on: ubuntu-latest
     environment: autodeploy_nginx
 
-    # Make the whole job fail fast if another push arrives
+    # Cancel an in-flight deploy if another push arrives
     concurrency:
       group: "deploy-${{ github.ref }}"
       cancel-in-progress: true
 
     steps:
-    # 1️⃣ Check out the exact commit that just landed
+    # 1. Check out the exact commit that just landed
     - uses: actions/checkout@v4
 
-    # 2️⃣ (Optional) Build your static assets here
-    # - uses: actions/setup-node@v4
-    #   with: { node-version: "20" }
-    # - run: npm ci && npm run build
-    #   # Suppose the build artefacts land in `dist/`
+    # 2. Build: homepage is copied verbatim from public/, the blog is rendered into dist/blog
+    - uses: actions/setup-node@v4
+      with:
+        node-version: "22"
+        cache: npm
+    - run: npm ci
+    - run: npm run build
 
-    # 3️⃣ Sync everything to the server
+    # 3. Sync only the built site to the server (keeps .git, workflows, sources out of the web root)
     - name: Upload with rsync over SSH
       uses: easingthemes/ssh-deploy@v4
       with:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
         REMOTE_HOST: ${{ secrets.SSH_HOST }}
         REMOTE_USER: ${{ secrets.SSH_USER }}
-        SOURCE: "."
+        SOURCE: "dist/"
         TARGET: /var/www/html/ethancloin.xyz
         ARGS: "-avzr --delete"
 
-    # 4️⃣ (Optional) run post‑deploy commands (cache‑clear, etc.)
-    - name: Touch reload file
+    # 4. Reload nginx
+    - name: Reload nginx
       uses: appleboy/ssh-action@v1
       with:
         host:     ${{ secrets.SSH_HOST }}

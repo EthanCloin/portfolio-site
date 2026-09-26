@@ -1,0 +1,52 @@
+name: Server (manual)
+
+# Manual, read-mostly operations on the droplet through the same SSH secrets the
+# deploy uses. Nothing here runs automatically.
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: What to run on the droplet
+        type: choice
+        required: true
+        default: status
+        options:
+          - status            # read-only snapshot (scripts/server/status.sh)
+          - setup-obsidian    # install Node 22, obsidian-headless, systemd unit, gh (scripts/server/setup-obsidian.sh)
+          - restart-sync      # systemctl restart obsidian-sync
+          - sync-logs         # last 100 lines of the sync service journal
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    environment: autodeploy_nginx
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Copy server scripts
+      uses: easingthemes/ssh-deploy@v4
+      with:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
+        REMOTE_HOST: ${{ secrets.SSH_HOST }}
+        REMOTE_USER: ${{ secrets.SSH_USER }}
+        SOURCE: "scripts/server/"
+        TARGET: /tmp/portfolio-server-scripts
+        ARGS: "-avzr --delete"
+
+    - name: Run ${{ inputs.action }}
+      uses: appleboy/ssh-action@v1
+      with:
+        host:     ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key:      ${{ secrets.SSH_KEY }}
+        script_stop: true
+        script: |
+          set -o pipefail
+          cd /tmp/portfolio-server-scripts
+          chmod +x *.sh
+          case "${{ inputs.action }}" in
+            status)         sudo ./status.sh ;;
+            setup-obsidian) sudo GRANT_READ_USER="$USER" ./setup-obsidian.sh ;;
+            restart-sync)   sudo systemctl restart obsidian-sync && sudo systemctl status obsidian-sync --no-pager ;;
+            sync-logs)      sudo journalctl -u obsidian-sync -n 100 --no-pager ;;
+          esac
